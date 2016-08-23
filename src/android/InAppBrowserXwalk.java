@@ -136,41 +136,9 @@ public class InAppBrowserXwalk extends CordovaPlugin {
     }
 
     class MyResourceClient extends XWalkResourceClient {
-           MyResourceClient(XWalkView view) {
-               super(view);
-           }
-            /*
-           @Override
-           public void onLoadStarted (XWalkView view, String url) {
-               if(xWalkWebView == null) return;
-               try {
-
-                   if(urlLoading.equals(view.getUrl())) return;
-                   urlLoading = view.getUrl();
-
-                   JSONObject obj = new JSONObject();
-                   obj.put("type", "loadstart");
-                   obj.put("url", view.getUrl());
-                   PluginResult result = new PluginResult(PluginResult.Status.OK, obj);
-                   result.setKeepCallback(true);
-                   callbackContext.sendPluginResult(result);
-               } catch (JSONException ex) {}
-           }
-
-           @Override
-           public void onLoadFinished (XWalkView view, String url) {
-               if(xWalkWebView == null) return;
-               try {
-
-                   JSONObject obj = new JSONObject();
-                   obj.put("type", "loadstop");
-                   obj.put("url", view.getUrl());
-                   PluginResult result = new PluginResult(PluginResult.Status.OK, obj);
-                   result.setKeepCallback(true);
-                   callbackContext.sendPluginResult(result);
-               } catch (JSONException ex) {}
-           }
-           */
+       MyResourceClient(XWalkView view) {
+           super(view);
+       }
     }
 
     private void openBrowser(final JSONArray data) throws JSONException {
@@ -339,7 +307,7 @@ public class InAppBrowserXwalk extends CordovaPlugin {
                             obj.put("type", "jsCallback");
                             obj.put("result", Boolean.parseBoolean(scriptResult));
                             PluginResult result = new PluginResult(PluginResult.Status.OK, obj);
-                            result.setKeepCallback(true);
+                            result.setKeepCallback(false);
                             callbackContext.sendPluginResult(result);
                         } catch (JSONException ex) {
                             // TODO
