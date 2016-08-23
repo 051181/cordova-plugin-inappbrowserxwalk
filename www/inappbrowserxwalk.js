@@ -26,7 +26,7 @@ InAppBrowserXwalk.prototype = {
         cordova.exec(null, null, "InAppBrowserXwalk", "stopLoading", []);
     },
     executeScript: function (injectDetails) {
-        cordova.exec(null, null, "InAppBrowserXwalk", "executeScript", [injectDetails.code, true]);
+        cordova.exec(null, null, "InAppBrowserXwalk", "executeScript", [injectDetails.code]);
     }
 }
 

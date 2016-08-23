@@ -77,11 +77,6 @@ public class InAppBrowserXwalk extends CordovaPlugin {
 
         else if (action.equals("executeScript")) {
             this.injectJS(data.getString(0));
-            // String jsWrapper = null;
-            // if (data.getBoolean(1)) {
-            //     jsWrapper = String.format("(function(){prompt(JSON.stringify([eval(%%s)]), 'gap-iab://%s')})()", callbackContext.getCallbackId());
-            // }
-            // injectDeferredObject(data.getString(0), jsWrapper);
         }
 
         return true;
@@ -106,7 +101,6 @@ public class InAppBrowserXwalk extends CordovaPlugin {
                     xWalkWebView.onActivityResult(requestCode, resultCode, intent);
                 }
             });
-
         }
 
         @Override
@@ -139,70 +133,6 @@ public class InAppBrowserXwalk extends CordovaPlugin {
                 callbackContext.sendPluginResult(result);
             } catch (JSONException ex) {}
         }
-
-        /**
-         * Tell the client to display a prompt dialog to the user.
-         * If the client returns true, WebView will assume that the client will
-         * handle the prompt dialog and call the appropriate JsPromptResult method.
-         *
-         * The prompt bridge provided for the InAppBrowser is capable of executing any
-         * oustanding callback belonging to the InAppBrowser plugin. Care has been
-         * taken that other callbacks cannot be triggered, and that no other code
-         * execution is possible.
-         *
-         * To trigger the bridge, the prompt default value should be of the form:
-         *
-         * gap-iab://<callbackId>
-         *
-         * where <callbackId> is the string id of the callback to trigger (something
-         * like "InAppBrowser0123456789")
-         *
-         * If present, the prompt message is expected to be a JSON-encoded value to
-         * pass to the callback. A JSON_EXCEPTION is returned if the JSON is invalid.
-         *
-         * @param view
-         * @param url
-         * @param message
-         * @param defaultValue
-         * @param result
-         */
-        // @Override
-        // public boolean onJsPrompt(XWalkView view, String url, String message, String defaultValue, XWalkJavascriptResult result) {
-        //     // See if the prompt string uses the 'gap-iab' protocol. If so, the remainder should be the id of a callback to execute.
-        //     if (defaultValue != null && defaultValue.startsWith("gap")) {
-        //         if(defaultValue.startsWith("gap-iab://")) {
-        //             PluginResult scriptResult;
-        //             String scriptCallbackId = defaultValue.substring(10);
-        //             if (scriptCallbackId.startsWith("InAppBrowserXwalk")) {
-        //                 if(message == null || message.length() == 0) {
-        //                     scriptResult = new PluginResult(PluginResult.Status.OK, new JSONArray());
-        //                 } else {
-        //                     try {
-        //                         JSONObject obj = new JSONObject();
-        //                         obj.put("type", "jsCallback");
-        //                         obj.put("result",  Boolean.parseBoolean(message));
-        //                         scriptResult = new PluginResult(PluginResult.Status.OK, obj);
-        //                     } catch(JSONException e) {
-        //                         scriptResult = new PluginResult(PluginResult.Status.JSON_EXCEPTION, e.getMessage());
-        //                     }
-        //                 }
-        //                 scriptResult.setKeepCallback(true);
-        //                 callbackContext.sendPluginResult(scriptResult);
-        //                 result.confirm();
-        //                 return true;
-        //             }
-        //         }
-        //         else
-        //         {
-        //             // Anything else with a gap: prefix should get this message
-        //             LOG.w(LOG_TAG, "InAppBrowser does not support Cordova API calls: " + url + " " + defaultValue); 
-        //             result.cancel();
-        //             return true;
-        //         }
-        //     }
-        //     return false;
-        // }
-
     }
 
     class MyResourceClient extends XWalkResourceClient {
@@ -387,48 +317,6 @@ public class InAppBrowserXwalk extends CordovaPlugin {
         });
     }
 
-    /**
-     * Inject an object (script or style) into the InAppBrowser WebView.
-     *
-     * This is a helper method for the inject{Script|Style}{Code|File} API calls, which
-     * provides a consistent method for injecting JavaScript code into the document.
-     *
-     * If a wrapper string is supplied, then the source string will be JSON-encoded (adding
-     * quotes) and wrapped using string formatting. (The wrapper string should have a single
-     * '%s' marker)
-     *
-     * @param source      The source object (filename or script/style text) to inject into
-     *                    the document.
-     * @param jsWrapper   A JavaScript string to wrap the source string in, so that the object
-     *                    is properly injected, or null if the source string is JavaScript text
-     *                    which should be executed directly.
-     */
-    private void injectDeferredObject(String source, String jsWrapper) {
-        String scriptToInject;
-        if (jsWrapper != null) {
-            org.json.JSONArray jsonEsc = new org.json.JSONArray();
-            jsonEsc.put(source);
-            String jsonRepr = jsonEsc.toString();
-            String jsonSourceString = jsonRepr.substring(1, jsonRepr.length()-1);
-            scriptToInject = String.format(jsWrapper, jsonSourceString);
-        } else {
-            scriptToInject = source;
-        }
-        final String finalScriptToInject = scriptToInject;
-        this.cordova.getActivity().runOnUiThread(new Runnable() {
-            @SuppressLint("NewApi")
-            @Override
-            public void run() {
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-                    // This action will have the side-effect of blurring the currently focused element
-                    xWalkWebView.load("javascript:" + finalScriptToInject, null);
-                } else {
-                    xWalkWebView.evaluateJavascript(finalScriptToInject, null);
-                }
-            }
-        });
-    }
-
     public void injectJS(String source) {
 
         final String finalScriptToInject = source;
@@ -444,14 +332,18 @@ public class InAppBrowserXwalk extends CordovaPlugin {
                     public void onReceiveValue(String scriptResult) {
 
                         try {
-                            LOG.e(LOG_TAG, "############## result: " + Boolean.parseBoolean(scriptResult));
+                            
+                            LOG.e(LOG_TAG, "############## result: " + scriptResult);
+                            
                             JSONObject obj = new JSONObject();
                             obj.put("type", "jsCallback");
                             obj.put("result", Boolean.parseBoolean(scriptResult));
                             PluginResult result = new PluginResult(PluginResult.Status.OK, obj);
                             result.setKeepCallback(true);
                             callbackContext.sendPluginResult(result);
-                        } catch (JSONException ex) {}
+                        } catch (JSONException ex) {
+                            // TODO
+                        }
                     }
                 });
             }
