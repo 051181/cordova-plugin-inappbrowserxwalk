@@ -20,11 +20,8 @@ import org.xwalk.core.XWalkView;
 import org.xwalk.core.XWalkResourceClient;
 import org.xwalk.core.XWalkPreferences;
 import org.xwalk.core.internal.XWalkViewInternal;
-//import org.xwalk.core.internal.XWalkCookieManager;
 import org.xwalk.core.XWalkCookieManager;
-// import org.crosswalk.engine.XWalkCordovaUiClient;
 import org.crosswalk.engine.XWalkCordovaView;
-// import org.crosswalk.engine.XWalkWebViewEngine;
 
 import android.net.Uri;
 import android.os.Build;
@@ -183,14 +180,12 @@ public class InAppBrowserXwalk extends CordovaPlugin {
                             try {
                                 JSONObject obj = new JSONObject();
                                 obj.put("type", "jsCallback");
-                                obj.put("result", message);
-                                // scriptResult = new PluginResult(PluginResult.Status.OK, new JSONArray(message));
+                                obj.put("result",  Boolean.parseBoolean(message));
                                 scriptResult = new PluginResult(PluginResult.Status.OK, obj);
                             } catch(JSONException e) {
                                 scriptResult = new PluginResult(PluginResult.Status.JSON_EXCEPTION, e.getMessage());
                             }
                         }
-                        // callbackContext.sendPluginResult(scriptResult, scriptCallbackId);
                         LOG.e(LOG_TAG, "###################################### Result: " + scriptResult.getMessage());
                         scriptResult.setKeepCallback(true);
                         callbackContext.sendPluginResult(scriptResult);
