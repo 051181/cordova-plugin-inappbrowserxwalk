@@ -326,17 +326,18 @@ public class InAppBrowserXwalk extends CordovaPlugin {
             public void run() {
                 
                 LOG.e(LOG_TAG, "############## finalScriptToInject: " + finalScriptToInject);
-                xWalkWebView.evaluateJavascript(finalScriptToInject, new JsCallback() {
+                
+                xWalkWebView.evaluateJavascript(finalScriptToInject, new ValueCallback<String>() {
                     @Override
-                    public void  onResult(final String resultValue) {
+                    public void onReceiveValue(String scriptResult) {
 
                         try {
                             
-                            LOG.e(LOG_TAG, "############## result: " + resultValue);
+                            LOG.e(LOG_TAG, "############## result: " + scriptResult);
                             
                             JSONObject obj = new JSONObject();
                             obj.put("type", "jsCallback");
-                            obj.put("result", Boolean.parseBoolean(resultValue));
+                            obj.put("result", Boolean.parseBoolean(scriptResult));
                             PluginResult result = new PluginResult(PluginResult.Status.OK, obj);
                             result.setKeepCallback(true);
                             callbackContext.sendPluginResult(result);
@@ -344,26 +345,7 @@ public class InAppBrowserXwalk extends CordovaPlugin {
                             // TODO
                         }
                     }
-                });                
-                // xWalkWebView.evaluateJavascript(finalScriptToInject, new ValueCallback<String>() {
-                //     @Override
-                //     public void onReceiveValue(String scriptResult) {
-
-                //         try {
-                            
-                //             LOG.e(LOG_TAG, "############## result: " + scriptResult);
-                            
-                //             JSONObject obj = new JSONObject();
-                //             obj.put("type", "jsCallback");
-                //             obj.put("result", Boolean.parseBoolean(scriptResult));
-                //             PluginResult result = new PluginResult(PluginResult.Status.OK, obj);
-                //             result.setKeepCallback(true);
-                //             callbackContext.sendPluginResult(result);
-                //         } catch (JSONException ex) {
-                //             // TODO
-                //         }
-                //     }
-                // });
+                });
             }
         });
     }
