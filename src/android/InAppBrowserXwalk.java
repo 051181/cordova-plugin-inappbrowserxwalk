@@ -307,7 +307,7 @@ public class InAppBrowserXwalk extends CordovaPlugin {
                             obj.put("type", "jsCallback");
                             obj.put("result", Boolean.parseBoolean(scriptResult));
                             PluginResult result = new PluginResult(PluginResult.Status.OK, obj);
-                            result.setKeepCallback(false);
+                            result.setKeepCallback(true);
                             callbackContext.sendPluginResult(result);
                         } catch (JSONException ex) {
                             // TODO
