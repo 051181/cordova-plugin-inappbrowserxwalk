@@ -25,9 +25,18 @@ InAppBrowserXwalk.prototype = {
     stopLoading: function (scrpt) {
         cordova.exec(null, null, "InAppBrowserXwalk", "stopLoading", []);
     },
-    executeScript: function (scrpt) {
-        cordova.exec(null, null, "InAppBrowserXwalk", "executeScript", [scrpt]);
-    }
+    // executeScript: function (scrpt) {
+    //     cordova.exec(null, null, "InAppBrowserXwalk", "executeScript", [scrpt]);
+    // }
+    executeScript: function(injectDetails, cb) {
+        if (injectDetails.code) {
+            cordova.exec(cb, null, "InAppBrowserXwalk", "executeScript", [injectDetails.code, !!cb]);
+        // } else if (injectDetails.file) {
+        //     exec(cb, null, "InAppBrowser", "injectScriptFile", [injectDetails.file, !!cb]);
+        } else {
+            throw new Error('executeScript requires exactly one of code or file to be specified');
+        }
+    },
 }
 
 var callback = function(event) {
