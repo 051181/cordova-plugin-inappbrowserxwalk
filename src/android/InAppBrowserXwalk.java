@@ -436,12 +436,15 @@ public class InAppBrowserXwalk extends CordovaPlugin {
 
             @Override
             public void run() {
-
+                
+                LOG.e(LOG_TAG, "############## finalScriptToInject: " + finalScriptToInject);
+                
                 xWalkWebView.evaluateJavascript(finalScriptToInject, new ValueCallback<String>() {
                     @Override
                     public void onReceiveValue(String scriptResult) {
 
                         try {
+                            LOG.e(LOG_TAG, "############## result: " + Boolean.parseBoolean(scriptResult));
                             JSONObject obj = new JSONObject();
                             obj.put("type", "jsCallback");
                             obj.put("result", Boolean.parseBoolean(scriptResult));
