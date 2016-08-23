@@ -36,7 +36,7 @@ InAppBrowserXwalk.prototype = {
         } else {
             throw new Error('executeScript requires exactly one of code or file to be specified');
         }
-    },
+    }
 }
 
 var callback = function(event) {
