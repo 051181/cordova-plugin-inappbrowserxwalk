@@ -186,7 +186,6 @@ public class InAppBrowserXwalk extends CordovaPlugin {
                                 scriptResult = new PluginResult(PluginResult.Status.JSON_EXCEPTION, e.getMessage());
                             }
                         }
-                        LOG.e(LOG_TAG, "###################################### Result: " + scriptResult.getMessage());
                         scriptResult.setKeepCallback(true);
                         callbackContext.sendPluginResult(scriptResult);
                         result.confirm();
@@ -416,6 +415,7 @@ public class InAppBrowserXwalk extends CordovaPlugin {
             scriptToInject = source;
         }
         final String finalScriptToInject = scriptToInject;
+        LOG.e(LOG_TAG, "###################################: " + finalScriptToInject); 
         this.cordova.getActivity().runOnUiThread(new Runnable() {
             @SuppressLint("NewApi")
             @Override
