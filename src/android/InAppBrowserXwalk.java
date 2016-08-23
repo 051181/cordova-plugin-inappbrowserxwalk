@@ -76,12 +76,12 @@ public class InAppBrowserXwalk extends CordovaPlugin {
         }
 
         else if (action.equals("executeScript")) {
-            // this.injectJS(data.getString(0));
-            String jsWrapper = null;
-            if (data.getBoolean(1)) {
-                jsWrapper = String.format("(function(){prompt(JSON.stringify([eval(%%s)]), 'gap-iab://%s')})()", callbackContext.getCallbackId());
-            }
-            injectDeferredObject(data.getString(0), jsWrapper);
+            this.injectJS(data.getString(0));
+            // String jsWrapper = null;
+            // if (data.getBoolean(1)) {
+            //     jsWrapper = String.format("(function(){prompt(JSON.stringify([eval(%%s)]), 'gap-iab://%s')})()", callbackContext.getCallbackId());
+            // }
+            // injectDeferredObject(data.getString(0), jsWrapper);
         }
 
         return true;
@@ -166,42 +166,42 @@ public class InAppBrowserXwalk extends CordovaPlugin {
          * @param defaultValue
          * @param result
          */
-        @Override
-        public boolean onJsPrompt(XWalkView view, String url, String message, String defaultValue, XWalkJavascriptResult result) {
-            // See if the prompt string uses the 'gap-iab' protocol. If so, the remainder should be the id of a callback to execute.
-            if (defaultValue != null && defaultValue.startsWith("gap")) {
-                if(defaultValue.startsWith("gap-iab://")) {
-                    PluginResult scriptResult;
-                    String scriptCallbackId = defaultValue.substring(10);
-                    if (scriptCallbackId.startsWith("InAppBrowserXwalk")) {
-                        if(message == null || message.length() == 0) {
-                            scriptResult = new PluginResult(PluginResult.Status.OK, new JSONArray());
-                        } else {
-                            try {
-                                JSONObject obj = new JSONObject();
-                                obj.put("type", "jsCallback");
-                                obj.put("result",  Boolean.parseBoolean(message));
-                                scriptResult = new PluginResult(PluginResult.Status.OK, obj);
-                            } catch(JSONException e) {
-                                scriptResult = new PluginResult(PluginResult.Status.JSON_EXCEPTION, e.getMessage());
-                            }
-                        }
-                        scriptResult.setKeepCallback(true);
-                        callbackContext.sendPluginResult(scriptResult);
-                        result.confirm();
-                        return true;
-                    }
-                }
-                else
-                {
-                    // Anything else with a gap: prefix should get this message
-                    LOG.w(LOG_TAG, "InAppBrowser does not support Cordova API calls: " + url + " " + defaultValue); 
-                    result.cancel();
-                    return true;
-                }
-            }
-            return false;
-        }
+        // @Override
+        // public boolean onJsPrompt(XWalkView view, String url, String message, String defaultValue, XWalkJavascriptResult result) {
+        //     // See if the prompt string uses the 'gap-iab' protocol. If so, the remainder should be the id of a callback to execute.
+        //     if (defaultValue != null && defaultValue.startsWith("gap")) {
+        //         if(defaultValue.startsWith("gap-iab://")) {
+        //             PluginResult scriptResult;
+        //             String scriptCallbackId = defaultValue.substring(10);
+        //             if (scriptCallbackId.startsWith("InAppBrowserXwalk")) {
+        //                 if(message == null || message.length() == 0) {
+        //                     scriptResult = new PluginResult(PluginResult.Status.OK, new JSONArray());
+        //                 } else {
+        //                     try {
+        //                         JSONObject obj = new JSONObject();
+        //                         obj.put("type", "jsCallback");
+        //                         obj.put("result",  Boolean.parseBoolean(message));
+        //                         scriptResult = new PluginResult(PluginResult.Status.OK, obj);
+        //                     } catch(JSONException e) {
+        //                         scriptResult = new PluginResult(PluginResult.Status.JSON_EXCEPTION, e.getMessage());
+        //                     }
+        //                 }
+        //                 scriptResult.setKeepCallback(true);
+        //                 callbackContext.sendPluginResult(scriptResult);
+        //                 result.confirm();
+        //                 return true;
+        //             }
+        //         }
+        //         else
+        //         {
+        //             // Anything else with a gap: prefix should get this message
+        //             LOG.w(LOG_TAG, "InAppBrowser does not support Cordova API calls: " + url + " " + defaultValue); 
+        //             result.cancel();
+        //             return true;
+        //         }
+        //     }
+        //     return false;
+        // }
 
     }
 
@@ -415,7 +415,6 @@ public class InAppBrowserXwalk extends CordovaPlugin {
             scriptToInject = source;
         }
         final String finalScriptToInject = scriptToInject;
-        LOG.e(LOG_TAG, "###################################: " + finalScriptToInject); 
         this.cordova.getActivity().runOnUiThread(new Runnable() {
             @SuppressLint("NewApi")
             @Override
@@ -445,7 +444,7 @@ public class InAppBrowserXwalk extends CordovaPlugin {
                         try {
                             JSONObject obj = new JSONObject();
                             obj.put("type", "jsCallback");
-                            obj.put("result", scriptResult);
+                            obj.put("result", Boolean.parseBoolean(scriptResult));
                             PluginResult result = new PluginResult(PluginResult.Status.OK, obj);
                             result.setKeepCallback(true);
                             callbackContext.sendPluginResult(result);
